@@ -1,0 +1,60 @@
+#!/bin/sh
+
+#check perl
+
+which perl >>/dev/null 2>&1
+
+if [ $? -ne 0 ]
+then
+	echo 'Perl not installed or not in path('$PATH')'
+	exit
+else
+	echo 'Perl found'
+fi
+
+#check transmission-remote
+
+which transmission-remote>>/dev/null 2>&1
+
+if [ $? -ne 0 ]
+then
+        echo 'transmission-remote not installed or not in path('$PATH')'
+        exit
+else
+        echo 'transmission-remote found'
+fi
+
+#-------------------------------------------------------
+echo $0 | grep '^/' >> /dev/null 2>&1
+
+if [ $? -eq 0 ] 
+then
+	path=`dirname $0`
+else 
+	path=`pwd`/`dirname $0`
+fi
+
+#get perl path
+
+perlpath=`which perl`
+
+#create the job script
+
+touch $path/job
+echo '#!/bin/sh' > $path/job
+echo 'cd '$path >> $path/job
+echo $perlpath r4t.pl >> $path/job
+chmod 755 $path/job
+#generate the cron table
+
+touch $path/mycrontab
+echo 'SHELL=/bin/sh' > $path/mycrontab
+echo '* * * * *	'$path'/job >> '$path'/r4t.log 2>&1' >> $path/mycrontab
+
+#activate the cron job
+
+#back up the old jobsa
+mkdir $path/backup
+crontab -l > $path/backup/$USER.old
+
+crontab $path/mycrontab

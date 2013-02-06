@@ -1,0 +1,10 @@
+	Release Notes for r4t (RSS support for Transmission)
+r4t is a standalone utility to enable bit torrent client Transmission RSS download capability.
+
+Now there is only Linux version with Perl.
+
+Release History
+========================================================
+0.01 - Initial version
+	* support <enclosure> tag 
+	* support <link> tag
